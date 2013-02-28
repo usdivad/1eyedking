@@ -1,4 +1,37 @@
 ﻿<!DOCTYPE html>
-<html manifest="/cache.manifest">
-
+<!--<html manifest="/cache.manifest">-->
+<html>
+<head>
+	<title>One Eyed King</title>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="user-scalable = no">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body onclick="javascript:nextTime();" ontouchend="javascript:nextTime();">
+	<script type="text/javascript">
+	
+	var numerator = 1;
+	var timesig = numerator + "<br>4";
+	var count = 0;
+	
+	function nextTime() {
+		if (count < 32) {
+			var current_numerator = numerator;
+			numerator = Math.floor(Math.random()*7) + 1;
+			if (numerator == current_numerator) {
+				if (current_numerator == 7) {numerator = 1;}
+				else {numerator++;}
+			}
+			count++;
+		}
+		else {
+			numerator = 8;
+		}
+		timesig = numerator + "<br>4";
+		document.getElementById("timesig_display").innerHTML = timesig;
+	}
+	
+	</script>
+	<div id="timesig_display">1<br>4</div>
+</body>
 </html>
