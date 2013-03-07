@@ -5,17 +5,65 @@
 	<title>One Eyed King</title>
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="user-scalable = no">
-	<link rel="stylesheet" href="style.css">
+	<style>
+	html, body {
+		/*background-color:#b0c4de;*/
+		background-color:#ffffff;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	
+	#outer {
+		position: absolute
+		background-color: #ffffff;
+		width: 100%;
+		height: 100%;
+	}
+
+	#timesig_display {
+		/*width: 500px;*/
+		padding-top: 5%;
+		margin-left: auto;
+		margin-right: auto;
+		font: bold 2500% Times New Roman, serif;
+		text-align: center;
+		line-height: 70%;
+	}
+	
+	#reset_button {
+		position: fixed;
+		background-color:#000000;
+		width: 100%;
+		height:10%;
+		top:90%;
+		font: 200% Times New Roman, serif;
+		color: #ffffff;
+		opacity: 0.75;
+	}
+	
+	#top_panel {
+	position: fixed;
+	background-color:#000000;
+	width: 100%;
+	height:10%;
+	font: 200% Times New Roman, serif;
+	color: #ffffff;
+	opacity: 0.75;
+	}
+	</style>
 </head>
-<body onclick="javascript:nextTime();" ontouchend="javascript:nextTime();">
+<body>
 	<script type="text/javascript">
 	
 	var numerator = 1;
 	var timesig = numerator + "<br>4";
 	var count = 0;
+	var MAX_COUNT = 32;
 	
 	function nextTime() {
-		if (count < 32) {
+		if (count < MAX_COUNT) {
 			var current_numerator = numerator;
 			numerator = Math.floor(Math.random()*7) + 1;
 			if (numerator == current_numerator) {
@@ -29,9 +77,23 @@
 		}
 		timesig = numerator + "<br>4";
 		document.getElementById("timesig_display").innerHTML = timesig;
+		document.getElementById("counter").innerHTML = count + "/" + MAX_COUNT;
+	}
+	
+	function reset() {
+		count = 0;
+		numerator = 1;
+		timesig = numerator + "<br>4";
+		document.getElementById("timesig_display").innerHTML = timesig;
+		document.getElementById("counter").innerHTML = count + "/" + MAX_COUNT;
 	}
 	
 	</script>
-	<div id="timesig_display">1<br>4</div>
+	<div id="top_panel"><span style="display:block;">"One Eyed King" - conductor app</span><span id="counter" style="display:block; text-align: right;">0/32</span></div>
+	<div id="outer" onclick="javascript:nextTime();" ontouchend="javascript:nextTime();">
+		<div id="timesig_display">1<br>4</div>
+	</div>
+	<div id="reset_button" onclick="reset();" ontouchend="reset();">reset</div>
+	
 </body>
 </html>
