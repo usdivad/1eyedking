@@ -24,7 +24,7 @@
 
 	#timesig_display {
 		/*width: 500px;*/
-		padding-top: 5%;
+		padding-top: 7%;
 		margin-left: auto;
 		margin-right: auto;
 		font: bold 2500% Times New Roman, serif;
@@ -37,20 +37,28 @@
 		background-color:#000000;
 		width: 100%;
 		height:10%;
-		top:90%;
+		top:91%;
 		font: 200% Times New Roman, serif;
 		color: #ffffff;
 		opacity: 0.75;
+		text-align: center;
 	}
 	
 	#top_panel {
 	position: fixed;
 	background-color:#000000;
 	width: 100%;
-	height:10%;
+	height:7%;
 	font: 200% Times New Roman, serif;
 	color: #ffffff;
 	opacity: 0.75;
+	}
+	
+	#counter {
+	position: relative;
+	display:block;
+	text-align: right;
+	bottom: 60%;
 	}
 	</style>
 </head>
@@ -60,40 +68,111 @@
 	var numerator = 1;
 	var timesig = numerator + "<br>4";
 	var count = 0;
-	var MAX_COUNT = 32;
+	var MAX_REPS = 3;
+	var NUM_SIGS = 7;
+	var MAX_COUNT = NUM_SIGS * MAX_REPS;
+	var index;
+	var current_numerator;
+	var timecounts = [];
+	for (var i=0; i<7; i++) {
+		timecounts.push(new Time(i+1));
+	}
+	//timecounts[0].count++;
+	
+	function Time(n) {
+		this.signature = n;
+		this.count = 0;
+		console.log(n+","+count);
+	}
+	
 	
 	function nextTime() {
-		if (count < MAX_COUNT) {
-			var current_numerator = numerator;
-			numerator = Math.floor(Math.random()*7) + 1;
-			if (numerator == current_numerator) {
-				if (current_numerator == 7) {numerator = 1;}
-				else {numerator++;}
+		if (timecounts.length > 0) {
+			index = Math.floor(Math.random()*timecounts.length);
+			current_numerator = numerator;
+			numerator = timecounts[index].signature;
+			if (current_numerator == timecounts[index].signature) {
+				if (timecounts.length > 1) {
+					if (index > 0) index--;
+					else index++;
+					numerator = timecounts[index].signature;
+				}
+				else {
+					//default to 1/4
+					numerator = 1;
+				}
+			}
+			timecounts[index].count = timecounts[index].count + 1;
+			console.log(numerator + " has count " + timecounts[index].count + ", timecounts.length is " + timecounts.length);
+			//remove the sig once it exceeds 3 counts
+			if (timecounts[index].count >= MAX_REPS) {
+				timecounts.splice(index, 1);
 			}
 			count++;
 		}
+		/*
+		if (count < MAX_COUNT) {
+			var valid = false;
+			while (!valid) {
+				index = Math.floor(Math.random()*7);
+				current_numerator = numerator;
+				if (timecounts[index] < 3 && current_numerator!=index+1) {
+					numerator = index + 1;
+					timecounts[index]++;
+					valid = true;
+					console.log(numerator + " has count " + timecounts[index] + ", total count is "+count);
+				}
+				
+				//just shift numerator in case of repeats (won't work if you're limiting each to three)
+				//if (numerator == current_numerator) {
+				//	if (current_numerator == 7) {numerator = 1;}
+				//	else {numerator++;}
+				//}
+				
+			}
+			count++;
+		}
+		*/
 		else {
 			numerator = 8;
+			count = MAX_COUNT+1;
 		}
 		timesig = numerator + "<br>4";
 		document.getElementById("timesig_display").innerHTML = timesig;
-		document.getElementById("counter").innerHTML = count + "/" + MAX_COUNT;
+		document.getElementById("counter").innerHTML = count + "/" + (MAX_COUNT+1);
 	}
 	
 	function reset() {
+		timecounts = [];
+		for (var i=0; i<7; i++) {
+			timecounts.push(new Time(i+1));
+		}
 		count = 0;
 		numerator = 1;
 		timesig = numerator + "<br>4";
 		document.getElementById("timesig_display").innerHTML = timesig;
-		document.getElementById("counter").innerHTML = count + "/" + MAX_COUNT;
+		document.getElementById("counter").innerHTML = count + "/" + (MAX_COUNT+1);
 	}
 	
+	
+	window.onload = function() {
+		//detect mobile for ontouchend vs. onclick
+		var isMobile = (/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent);
+		if (isMobile) {
+			document.getElementById("outer").ontouchend = function() {nextTime();};
+			document.getElementById("reset_button").ontouchend = function() {reset();};
+		}
+		else {
+			document.getElementById("outer").onclick = function() {nextTime();};
+			document.getElementById("reset_button").onclick = function() {reset();};		
+		}
+	};
 	</script>
-	<div id="top_panel"><span style="display:block;">"One Eyed King" - conductor app</span><span id="counter" style="display:block; text-align: right;">0/32</span></div>
-	<div id="outer" onclick="javascript:nextTime();" ontouchend="javascript:nextTime();">
+	<div id="top_panel"><span style="display:block;">"One Eyed King" - conductor app</span><span id="counter">0/22</span></div>
+	<div id="outer">
 		<div id="timesig_display">1<br>4</div>
 	</div>
-	<div id="reset_button" onclick="reset();" ontouchend="reset();">reset</div>
+	<div id="reset_button">reset</div>
 	
 </body>
 </html>
